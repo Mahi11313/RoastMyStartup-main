@@ -1,0 +1,82 @@
+import { Link, useLocation } from "react-router-dom";
+import { Flame, History, Image, CreditCard, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+
+const sidebarLinks = [
+  { href: "/dashboard", label: "Roast History", icon: History },
+  { href: "/dashboard/memes", label: "Saved Memes", icon: Image },
+  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+];
+
+export function DashboardSidebar() {
+  const location = useLocation();
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <aside
+      className={`bg-background border-r-4 border-foreground flex flex-col transition-all duration-200 ${
+        collapsed ? "w-16" : "w-64"
+      }`}
+    >
+      {/* Logo */}
+      <div className="h-16 border-b-4 border-foreground flex items-center justify-between px-4">
+        {!collapsed && (
+          <Link to="/" className="flex items-center gap-2 font-bold">
+            <Flame className="h-6 w-6 text-primary fill-primary" />
+            <span>RoastMyStartup</span>
+          </Link>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="p-1 hover:bg-muted border-2 border-foreground"
+        >
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </button>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 py-4">
+        {sidebarLinks.map((link) => {
+          const Icon = link.icon;
+          const isActive = location.pathname === link.href;
+
+          return (
+            <Link
+              key={link.href}
+              to={link.href}
+              className={`flex items-center gap-3 px-4 py-3 font-bold transition-colors ${
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Icon className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && <span>{link.label}</span>}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Upgrade Banner */}
+      {!collapsed && (
+        <div className="p-4 border-t-4 border-foreground">
+          <div className="bg-primary p-4 border-4 border-foreground">
+            <p className="font-bold text-sm mb-2">Go Nuclear! 💀</p>
+            <p className="text-xs mb-3">Unlock unlimited roasts</p>
+            <Link
+              to="/pricing"
+              className="block text-center bg-secondary text-secondary-foreground py-2 px-4 border-4 border-foreground font-bold text-sm hover:translate-x-1 hover:translate-y-1 transition-transform"
+            >
+              UPGRADE
+            </Link>
+          </div>
+        </div>
+      )}
+    </aside>
+  );
+}
